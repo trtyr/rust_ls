@@ -1,0 +1,18 @@
+[package]
+name = "rust_ls"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.53", features = ["derive"] }
+owo-colors = "4.2.3"
+tabled = "0.20.0"
+chrono = "0.4"
+windows = { version = "0.62.2", features = ["Win32", "Win32_Storage", "Win32_Storage_FileSystem"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
