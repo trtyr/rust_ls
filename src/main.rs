@@ -3,12 +3,12 @@ mod structs;
 
 use crate::structs::{Cli, FileEntry};
 use clap::Parser;
-use owo_colors::{OwoColorize};
+use owo_colors::OwoColorize;
 use std::fs;
-use tabled::{Table, settings::Style};
 use tabled::settings::Color;
 use tabled::settings::object::{Columns, Rows};
 use tabled::tables::TableValue::Column;
+use tabled::{Table, settings::Style};
 
 fn main() {
     let cli = Cli::parse();
@@ -24,23 +24,21 @@ fn main() {
         },
     };
 
-    if let Ok(does_exists) = fs::exists(&path) {
-        if does_exists {
-            let tip = format!("目标路径: {}\n", path.display().green());
+    match fs::canonicalize(&path) {
+        Ok(absolute_path) => {
+            let tip = format!("目标路径: {}\n", absolute_path.display().green());
             println!("{}", tip.green());
 
-            let get_file = FileEntry::get_file(&path);
+            let get_file = FileEntry::get_file(&absolute_path);
             let mut table = Table::new(&get_file);
             table.with(Style::rounded());
             table.modify(Rows::first(), Color::FG_BRIGHT_CYAN);
             println!("{}", table);
-
-        } else {
+        }
+        Err(_) => {
             let result = format!("目标路径不存在: {}", path.display());
             println!("{}", result.red());
         }
-    } else {
-        println!("{}", "读取目标路径发生错误".red());
     }
 
     // println!("{}", path.display());
